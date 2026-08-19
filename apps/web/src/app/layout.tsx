@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { ThemeProvider } from '@/components/theme/theme-provider';
+import { Providers } from '@/components/providers';
 import { ThemeScript } from '@/components/theme/theme-script';
 
 const inter = Inter({
@@ -26,7 +26,7 @@ export default function RootLayout({
         <ThemeScript />
       </head>
       <body className={`${inter.variable} antialiased`}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

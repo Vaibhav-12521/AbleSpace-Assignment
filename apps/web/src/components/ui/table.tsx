@@ -101,7 +101,7 @@ export function Td({
   return (
     <td
       className={cn(
-        'h-10 px-4 whitespace-nowrap',
+        'h-11 px-4 whitespace-nowrap',
         align === 'right' && 'text-right',
         align === 'center' && 'text-center',
         className,
