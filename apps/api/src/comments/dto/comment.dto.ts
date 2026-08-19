@@ -1,0 +1,20 @@
+import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+
+export class CreateCommentDto {
+  @IsString()
+  @MinLength(1, { message: 'Comment cannot be empty' })
+  @MaxLength(5000)
+  body!: string;
+
+  /** Present when replying inside an existing thread. */
+  @IsOptional()
+  @IsString()
+  parentId?: string;
+}
+
+export class UpdateCommentDto {
+  @IsString()
+  @MinLength(1, { message: 'Comment cannot be empty' })
+  @MaxLength(5000)
+  body!: string;
+}
