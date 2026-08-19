@@ -210,3 +210,58 @@ body {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+/*
+  Popover / menu transitions, keyed off the data-state Radix sets while
+  mounting and unmounting. Written here rather than pulling in an animation
+  plugin for four keyframes.
+*/
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes overlay-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+.overlay-animate[data-state="open"] {
+  animation: overlay-in 120ms ease-out;
+}
+
+.overlay-animate[data-state="closed"] {
+  animation: overlay-out 100ms ease-in;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-animate[data-state="open"] {
+  animation: fade-in 150ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay-animate[data-state],
+  .fade-animate[data-state] {
+    animation: none;
+  }
+}
