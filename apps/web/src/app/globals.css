@@ -1,0 +1,212 @@
+@import "tailwindcss";
+
+/*
+  Design tokens.
+
+  Light values were sampled directly out of the Figma PNG exports rather than
+  eyeballed — surfaces land on Tailwind's neutral scale (#ffffff / #fafafa /
+  #f5f5f5), primary is #171717, and the six Color Mode swatches are exact
+  Tailwind 600s.
+
+  The Figma has no dark-theme frames, so the dark values are derived: same
+  token roles, same contrast relationships, inverted through the neutral scale.
+  Noted in the README as an intentional deviation.
+*/
+
+:root {
+  --canvas: #f5f5f5;
+  --sidebar: #fafafa;
+  --surface: #ffffff;
+  --surface-subtle: #f5f5f5;
+  --surface-hover: #f5f5f5;
+
+  --border: #e5e5e5;
+  --border-subtle: #f1f1f1;
+
+  --text: #171717;
+  --text-muted: #737373;
+  --text-subtle: #a3a3a3;
+
+  --primary: #171717;
+  --primary-fg: #ffffff;
+
+  /* Priority scale, sampled from the list view. */
+  --priority-urgent: #e24b4b;
+  --priority-high: #f15b5b;
+  --priority-medium: #fa8433;
+  --priority-low: #b4bac3;
+  --priority-none: #b4bac3;
+
+  --danger: #e24b4b;
+  --danger-soft: #fceaea;
+
+  --overlay: rgb(0 0 0 / 0.32);
+
+  --shadow-popover: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.10);
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.05);
+
+  --radius: 0.5rem;
+}
+
+:root[data-theme="dark"] {
+  --canvas: #0a0a0a;
+  --sidebar: #131313;
+  --surface: #171717;
+  --surface-subtle: #1f1f1f;
+  --surface-hover: #262626;
+
+  --border: #2a2a2a;
+  --border-subtle: #212121;
+
+  --text: #fafafa;
+  --text-muted: #a1a1a1;
+  --text-subtle: #6f6f6f;
+
+  --primary: #fafafa;
+  --primary-fg: #171717;
+
+  --priority-urgent: #f36a6a;
+  --priority-high: #f37f7f;
+  --priority-medium: #fb9a52;
+  --priority-low: #6b7280;
+  --priority-none: #6b7280;
+
+  --danger: #f36a6a;
+  --danger-soft: #3a1f1f;
+
+  --overlay: rgb(0 0 0 / 0.6);
+
+  --shadow-popover: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.45);
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3);
+}
+
+/*
+  Color Mode. The Figma ticks "Blue" while rendering the UI in black, so the
+  app defaults to the Black mode to reproduce the screens exactly; picking any
+  other mode recolours accents. Swatch hexes are as-designed — note that the
+  option labelled "Blue" is drawn with purple-600, which is preserved here
+  rather than silently corrected.
+*/
+:root,
+:root[data-accent="black"] {
+  --accent: #171717;
+  --accent-fg: #ffffff;
+  --accent-soft: #f5f5f5;
+}
+
+:root[data-accent="amber"] {
+  --accent: #d97706;
+  --accent-fg: #ffffff;
+  --accent-soft: #fef3e2;
+}
+
+:root[data-accent="blue"] {
+  --accent: #9333ea;
+  --accent-fg: #ffffff;
+  --accent-soft: #f5ebfd;
+}
+
+:root[data-accent="pink"] {
+  --accent: #db2777;
+  --accent-fg: #ffffff;
+  --accent-soft: #fdeaf3;
+}
+
+:root[data-accent="rose"] {
+  --accent: #e11d48;
+  --accent-fg: #ffffff;
+  --accent-soft: #fdeaee;
+}
+
+:root[data-accent="emerald"] {
+  --accent: #059669;
+  --accent-fg: #ffffff;
+  --accent-soft: #e7f6f0;
+}
+
+:root[data-theme="dark"][data-accent="black"],
+:root[data-theme="dark"]:not([data-accent]) {
+  --accent: #fafafa;
+  --accent-fg: #171717;
+  --accent-soft: #262626;
+}
+
+:root[data-theme="dark"][data-accent="amber"] { --accent-soft: #2e2109; }
+:root[data-theme="dark"][data-accent="blue"] { --accent-soft: #251434; }
+:root[data-theme="dark"][data-accent="pink"] { --accent-soft: #2f1020; }
+:root[data-theme="dark"][data-accent="rose"] { --accent-soft: #2f0f18; }
+:root[data-theme="dark"][data-accent="emerald"] { --accent-soft: #0a2a20; }
+
+/* Expose the tokens to Tailwind's utility generator. */
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-sidebar: var(--sidebar);
+  --color-surface: var(--surface);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-surface-hover: var(--surface-hover);
+
+  --color-line: var(--border);
+  --color-line-subtle: var(--border-subtle);
+
+  --color-ink: var(--text);
+  --color-ink-muted: var(--text-muted);
+  --color-ink-subtle: var(--text-subtle);
+
+  --color-primary: var(--primary);
+  --color-primary-fg: var(--primary-fg);
+
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+
+  --color-priority-urgent: var(--priority-urgent);
+  --color-priority-high: var(--priority-high);
+  --color-priority-medium: var(--priority-medium);
+  --color-priority-low: var(--priority-low);
+  --color-priority-none: var(--priority-none);
+
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+
+  --radius-card: var(--radius);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+* {
+  border-color: var(--border);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--canvas);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Theme switches shouldn't animate every surface on the page at once. */
+:root {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* Thin scrollbars, matching the design's board and popover scroll areas. */
+@supports (scrollbar-width: thin) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
