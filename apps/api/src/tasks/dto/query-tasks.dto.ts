@@ -1,6 +1,16 @@
 import { Priority } from '@prisma/client';
 import { Transform } from 'class-transformer';
-import { IsArray, IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsIn,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
+
+export const DUE_FILTERS = ['overdue', 'today', 'week', 'none'] as const;
+export type DueFilter = (typeof DUE_FILTERS)[number];
 
 /** Backs the search box and the filter menu on the toolbar. */
 export class QueryTasksDto {
@@ -13,6 +23,11 @@ export class QueryTasksDto {
   @IsOptional()
   @IsString()
   projectId?: string;
+
+  /** Due-date preset from the filter menu. Mutually exclusive by nature. */
+  @IsOptional()
+  @IsIn(DUE_FILTERS)
+  due?: DueFilter;
 
   @IsOptional()
   @Transform(({ value }) => toArray(value))

@@ -8,7 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { MoveTaskDto } from './dto/move-task.dto';
-import { QueryTasksDto } from './dto/query-tasks.dto';
+import { QueryTasksDto, type DueFilter } from './dto/query-tasks.dto';
 
 /** Everything the board card and list row need, in one shape. */
 const TASK_INCLUDE = {
@@ -42,6 +42,7 @@ export class TasksService {
     if (query.projectId) where.projectId = query.projectId;
     if (query.statusIds?.length) where.statusId = { in: query.statusIds };
     if (query.priorities?.length) where.priority = { in: query.priorities };
+    if (query.due) Object.assign(where, dueDateWhere(query.due));
 
     if (query.q) {
       where.OR = [
@@ -337,6 +338,27 @@ export class TasksService {
       data: { taskId, userId, type, message },
     });
   }
+}
+
+/**
+ * Translates a due-date preset into a where clause.
+ *
+ * Boundaries are computed from the server's midnight. A production build would
+ * take the caller's timezone as a parameter; for a single-region demo the
+ * server's local day is close enough, and it is noted in the README.
+ */
+function dueDateWhere(due: DueFilter): Prisma.TaskWhereInput {
+  if (due === 'none') return { dueDate: null };
+
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+
+  if (due === 'overdue') return { dueDate: { lt: startOfToday } };
+
+  const end = new Date(startOfToday);
+  end.setDate(end.getDate() + (due === 'today' ? 1 : 7));
+
+  return { dueDate: { gte: startOfToday, lt: end } };
 }
 
 /** Flattens Prisma's join rows into the shape the UI consumes. */
