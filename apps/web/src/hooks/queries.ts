@@ -207,4 +207,32 @@ export function useCreateComment(taskId: string) {
   });
 }
 
+export function useDeleteComment(taskId: string) {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.deleteComment(id),
+    onSuccess: () =>
+      client.invalidateQueries({ queryKey: queryKeys.task(taskId) }),
+  });
+}
+
+export function useCreateResource(taskId: string) {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (input: { url: string; label?: string }) =>
+      api.createResource(taskId, input),
+    onSuccess: () =>
+      client.invalidateQueries({ queryKey: queryKeys.task(taskId) }),
+  });
+}
+
+export function useDeleteResource(taskId: string) {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.deleteResource(id),
+    onSuccess: () =>
+      client.invalidateQueries({ queryKey: queryKeys.task(taskId) }),
+  });
+}
+
 export type { TaskDetail };

@@ -1,15 +1,21 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import Link from 'next/link';
 import * as Dialog from '@radix-ui/react-dialog';
-import { PanelLeft } from 'lucide-react';
+import { ChevronRight, PanelLeft } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { Sidebar, SidebarContent } from './sidebar';
+
+export interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
 
 interface ShellContextValue {
   sidebarOpen: boolean;
   toggleSidebar: () => void;
-  setBreadcrumbs: (nodes: React.ReactNode) => void;
+  setBreadcrumbs: (items: BreadcrumbItem[] | null) => void;
 }
 
 const ShellContext = createContext<ShellContextValue | null>(null);
@@ -23,14 +29,19 @@ export function useShell() {
 /**
  * Lets a page publish breadcrumbs into the shell header (screen 12) without
  * the layout needing to know which route is rendering.
+ *
+ * Takes plain data, not JSX: a JSX argument would be a fresh object on every
+ * render, so the effect would re-run forever. Serialising the items gives the
+ * effect a value that only changes when the crumbs actually change.
  */
-export function useBreadcrumbs(nodes: React.ReactNode) {
+export function useBreadcrumbs(items: BreadcrumbItem[]) {
   const { setBreadcrumbs } = useShell();
+  const serialised = JSON.stringify(items);
 
   useEffect(() => {
-    setBreadcrumbs(nodes);
+    setBreadcrumbs(JSON.parse(serialised) as BreadcrumbItem[]);
     return () => setBreadcrumbs(null);
-  }, [nodes, setBreadcrumbs]);
+  }, [serialised, setBreadcrumbs]);
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -38,7 +49,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // hides a persistent rail, the drawer overlays the page.
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [breadcrumbs, setBreadcrumbs] = useState<React.ReactNode>(null);
+  const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[] | null>(null);
 
   return (
     <ShellContext.Provider
@@ -87,7 +98,35 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <PanelLeft className="h-4 w-4" />
               </button>
 
-              <div className="min-w-0 flex-1">{breadcrumbs}</div>
+              <div className="min-w-0 flex-1">
+                {breadcrumbs && breadcrumbs.length > 0 && (
+                  <nav
+                    aria-label="Breadcrumb"
+                    className="flex min-w-0 items-center gap-1 text-[13px] text-ink-muted"
+                  >
+                    {breadcrumbs.map((crumb, index) => (
+                      <span
+                        key={`${crumb.label}-${index}`}
+                        className="flex min-w-0 items-center gap-1"
+                      >
+                        {index > 0 && (
+                          <ChevronRight className="h-3.5 w-3.5 shrink-0" />
+                        )}
+                        {crumb.href ? (
+                          <Link
+                            href={crumb.href}
+                            className="truncate transition-colors hover:text-ink"
+                          >
+                            {crumb.label}
+                          </Link>
+                        ) : (
+                          <span className="truncate text-ink">{crumb.label}</span>
+                        )}
+                      </span>
+                    ))}
+                  </nav>
+                )}
+              </div>
             </header>
 
             <main className="min-h-0 flex-1 overflow-auto">{children}</main>

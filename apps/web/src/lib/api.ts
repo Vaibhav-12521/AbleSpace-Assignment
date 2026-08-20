@@ -1,5 +1,6 @@
 import type {
   Project,
+  Resource,
   Session,
   Task,
   TaskDetail,
@@ -189,6 +190,15 @@ export const api = {
 
   deleteProject: (id: string) =>
     request<{ id: string }>(`/projects/${id}`, { method: 'DELETE' }),
+
+  createResource: (taskId: string, input: { url: string; label?: string }) =>
+    request<Resource>(`/tasks/${taskId}/resources`, {
+      method: 'POST',
+      body: JSON.stringify(input),
+    }),
+
+  deleteResource: (id: string) =>
+    request<{ id: string }>(`/resources/${id}`, { method: 'DELETE' }),
 
   createComment: (taskId: string, input: { body: string; parentId?: string }) =>
     request<Comment>(`/tasks/${taskId}/comments`, {
