@@ -1,0 +1,29 @@
+# Render blueprint for the NestJS API.
+#
+# The Next.js frontend deploys to Vercel with root directory `apps/web`; only
+# the API is described here.
+#
+# Note on the free tier: a free web service spins down after ~15 minutes idle
+# and takes 30-60s to wake. Since the brief rejects non-working URLs, point an
+# uptime pinger at /api/health every 10 minutes to keep it warm.
+services:
+  - type: web
+    name: pyramid-api
+    runtime: node
+    plan: free
+    region: singapore
+    rootDir: apps/api
+    buildCommand: npm ci && npx prisma generate && npx prisma migrate deploy && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATABASE_URL
+        sync: false # set in the Render dashboard to the Neon connection string
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 30d
+      - key: CORS_ORIGINS
+        sync: false # set to the deployed Vercel origin
