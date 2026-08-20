@@ -7,11 +7,15 @@ import {
   useBootstrap,
   useCreateTask,
   useDeleteTask,
+  useMoveTask,
   useTasks,
 } from '@/hooks/queries';
 import { TaskToolbar } from '@/components/tasks/task-toolbar';
 import { TaskListView } from '@/components/tasks/task-list-view';
+import { TaskBoardView } from '@/components/tasks/task-board-view';
+import { TaskFilterMenu } from '@/components/tasks/task-filter-menu';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/states';
+import type { TaskFilters } from '@/lib/api';
 import type { Task } from '@/lib/types';
 
 export default function TasksPage() {
@@ -22,14 +26,19 @@ export default function TasksPage() {
   const { mode, fields, setMode, toggleField } = useViewPreferences('tasks');
 
   const bootstrap = useBootstrap();
-  const filters = useMemo(
-    () => (debouncedSearch ? { q: debouncedSearch } : {}),
-    [debouncedSearch],
+
+  // Facet filters live separately from the search box, then merge into one
+  // query so the request (and the React Query cache key) reflects both.
+  const [facets, setFacets] = useState<TaskFilters>({});
+  const filters = useMemo<TaskFilters>(
+    () => ({ ...facets, q: debouncedSearch || undefined }),
+    [facets, debouncedSearch],
   );
   const tasks = useTasks(filters);
 
   const createTask = useCreateTask();
   const deleteTask = useDeleteTask();
+  const moveTask = useMoveTask();
 
   const statuses = bootstrap.data?.statuses ?? [];
 
@@ -51,6 +60,13 @@ export default function TasksPage() {
         onModeChange={setMode}
         fields={fields}
         onFieldChange={toggleField}
+        filterContent={
+          <TaskFilterMenu
+            filters={facets}
+            onChange={setFacets}
+            workspace={bootstrap.data}
+          />
+        }
         onAdd={() => {
           const first = statuses[0];
           if (first) handleCreate(first.id, 'New task');
@@ -76,6 +92,15 @@ export default function TasksPage() {
         <EmptyState
           title="No matching tasks"
           description={`Nothing matched “${debouncedSearch}”.`}
+        />
+      ) : mode === 'board' ? (
+        <TaskBoardView
+          statuses={statuses}
+          tasks={tasks.data ?? []}
+          fields={fields}
+          onCreateTask={handleCreate}
+          onDeleteTask={handleDelete}
+          onMoveTask={(input) => moveTask.mutate(input)}
         />
       ) : (
         <TaskListView

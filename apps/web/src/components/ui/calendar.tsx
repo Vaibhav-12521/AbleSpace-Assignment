@@ -96,7 +96,9 @@ export function Calendar({
               key={day.toISOString()}
               type="button"
               onClick={() => onSelect(day)}
-              aria-selected={isSelected}
+              // aria-pressed, not aria-selected: the button role doesn't
+              // support aria-selected outside a listbox/grid.
+              aria-pressed={isSelected}
               aria-label={format(day, 'd MMMM yyyy')}
               className={cn(
                 'mx-auto flex h-7 w-7 items-center justify-center rounded-full text-[12px] transition-colors',

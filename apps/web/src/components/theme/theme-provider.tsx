@@ -1,13 +1,7 @@
 'use client';
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo } from 'react';
+import { useStoredString, writeStorage } from '@/lib/persistent-store';
 import {
   COLOR_MODE_STORAGE_KEY,
   DEFAULT_COLOR_MODE,
@@ -29,55 +23,33 @@ interface ThemeContextValue {
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // Seeded from the defaults, then reconciled with what ThemeScript already
-  // wrote onto <html>. Reading localStorage during render would break SSR.
-  const [theme, setThemeState] = useState<Theme>(DEFAULT_THEME);
-  const [colorMode, setColorModeState] = useState<ColorMode>(DEFAULT_COLOR_MODE);
+  // localStorage is the single source of truth, read through an external
+  // store — so there is no local copy to keep in sync, and other tabs update
+  // this one automatically.
+  const storedTheme = useStoredString(THEME_STORAGE_KEY);
+  const storedColorMode = useStoredString(COLOR_MODE_STORAGE_KEY);
+
+  const theme = isTheme(storedTheme) ? storedTheme : DEFAULT_THEME;
+  const colorMode = isColorMode(storedColorMode)
+    ? storedColorMode
+    : DEFAULT_COLOR_MODE;
+
+  // ThemeScript sets these before first paint; these effects keep <html> in
+  // step with later changes, including ones made in another tab.
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+  }, [theme]);
 
   useEffect(() => {
-    const root = document.documentElement;
-    const storedTheme = root.dataset.theme;
-    const storedAccent = root.dataset.accent;
-
-    if (isTheme(storedTheme)) setThemeState(storedTheme);
-    if (isColorMode(storedAccent)) setColorModeState(storedAccent);
-  }, []);
+    document.documentElement.dataset.accent = colorMode;
+  }, [colorMode]);
 
   const setTheme = useCallback((next: Theme) => {
-    setThemeState(next);
-    document.documentElement.dataset.theme = next;
-    try {
-      localStorage.setItem(THEME_STORAGE_KEY, next);
-    } catch {
-      // Private-mode browsers can refuse writes; the in-memory choice still applies.
-    }
+    writeStorage(THEME_STORAGE_KEY, next);
   }, []);
 
   const setColorMode = useCallback((next: ColorMode) => {
-    setColorModeState(next);
-    document.documentElement.dataset.accent = next;
-    try {
-      localStorage.setItem(COLOR_MODE_STORAGE_KEY, next);
-    } catch {
-      // Same as above.
-    }
-  }, []);
-
-  // Keep multiple tabs in sync.
-  useEffect(() => {
-    function onStorage(event: StorageEvent) {
-      if (event.key === THEME_STORAGE_KEY && isTheme(event.newValue)) {
-        setThemeState(event.newValue);
-        document.documentElement.dataset.theme = event.newValue;
-      }
-      if (event.key === COLOR_MODE_STORAGE_KEY && isColorMode(event.newValue)) {
-        setColorModeState(event.newValue);
-        document.documentElement.dataset.accent = event.newValue;
-      }
-    }
-
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
+    writeStorage(COLOR_MODE_STORAGE_KEY, next);
   }, []);
 
   const value = useMemo(

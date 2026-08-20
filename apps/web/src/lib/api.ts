@@ -86,9 +86,20 @@ async function request<T>(
   return response.json() as Promise<T>;
 }
 
+export const DUE_FILTERS = ['overdue', 'today', 'week', 'none'] as const;
+export type DueFilter = (typeof DUE_FILTERS)[number];
+
+export const DUE_FILTER_LABELS: Record<DueFilter, string> = {
+  overdue: 'Overdue',
+  today: 'Today',
+  week: 'This week',
+  none: 'No due date',
+};
+
 export interface TaskFilters {
   q?: string;
   projectId?: string;
+  due?: DueFilter;
   statusIds?: string[];
   priorities?: Priority[];
   assigneeIds?: string[];
