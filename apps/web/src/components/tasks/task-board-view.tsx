@@ -23,7 +23,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, MoreHorizontal, Plus } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { TaskCard } from './task-card';
-import { InlineTaskInput } from './task-list-view';
+import { InlineTaskInput } from './inline-task-input';
 import { StatusDot } from '@/components/ui/collapsible-section';
 import {
   DropdownMenu,

@@ -21,7 +21,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { InlineTaskInput } from './task-list-view';
+import { InlineTaskInput } from './inline-task-input';
 import { formatLongDate } from '@/lib/date';
 import type { Task } from '@/lib/types';
 

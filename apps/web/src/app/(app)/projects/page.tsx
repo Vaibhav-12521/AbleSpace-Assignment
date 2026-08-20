@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/states';
 import { TaskToolbar } from '@/components/tasks/task-toolbar';
-import { InlineTaskInput } from '@/components/tasks/task-list-view';
+import { InlineTaskInput } from '@/components/tasks/inline-task-input';
 import {
   PriorityIcon,
   PRIORITY_LABELS,

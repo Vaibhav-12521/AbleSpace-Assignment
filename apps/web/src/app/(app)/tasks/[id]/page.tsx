@@ -101,13 +101,15 @@ export default function TaskDetailPage() {
             />
 
             <div className="flex shrink-0 items-center gap-1 text-ink-muted">
-              <IconBadge title="Private task">
+              {/* Decorative status affordances are dropped on small screens so
+                  the title keeps its width; the actionable ones stay. */}
+              <IconBadge title="Private task" className="hidden sm:inline-flex">
                 <Lock className="h-3.5 w-3.5" />
               </IconBadge>
-              <span className="inline-flex h-7 items-center gap-1 rounded-md border border-line px-2 text-[11px]">
+              <span className="hidden h-7 items-center gap-1 rounded-md border border-line px-2 text-[11px] sm:inline-flex">
                 <Eye className="h-3.5 w-3.5" />1
               </span>
-              <IconBadge title="Share">
+              <IconBadge title="Share" className="hidden sm:inline-flex">
                 <Share2 className="h-3.5 w-3.5" />
               </IconBadge>
               <DropdownMenu>
@@ -130,12 +132,14 @@ export default function TaskDetailPage() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              {/* Only meaningful where the rail sits beside the content; below
+                  lg it stacks underneath and there is nothing to collapse. */}
               <button
                 type="button"
                 aria-label={railOpen ? 'Hide details' : 'Show details'}
                 aria-expanded={railOpen}
                 onClick={() => setRailOpen((open) => !open)}
-                className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-line transition-colors hover:bg-surface-hover hover:text-ink"
+                className="hidden h-7 w-7 items-center justify-center rounded-md border border-line transition-colors hover:bg-surface-hover hover:text-ink lg:inline-flex"
               >
                 <PanelRight className="h-3.5 w-3.5" />
               </button>
@@ -246,7 +250,9 @@ export default function TaskDetailPage() {
         />
       </div>
 
-      <div className={cn('space-y-4 lg:w-[280px]', !railOpen && 'hidden')}>
+      {/* Collapsing only applies from lg up, where the toggle exists — below
+          that the rail always stacks under the content. */}
+      <div className={cn('space-y-4 lg:w-[280px]', !railOpen && 'lg:hidden')}>
         <TaskDetailsPanel
           task={detail}
           workspace={bootstrap.data}
@@ -276,15 +282,20 @@ function PropertyRow({
 
 function IconBadge({
   title,
+  className,
   children,
 }: {
   title: string;
+  className?: string;
   children: React.ReactNode;
 }) {
   return (
     <span
       title={title}
-      className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-line"
+      className={cn(
+        'inline-flex h-7 w-7 items-center justify-center rounded-md border border-line',
+        className,
+      )}
     >
       {children}
     </span>

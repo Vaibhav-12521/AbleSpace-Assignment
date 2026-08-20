@@ -22,6 +22,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { TaskCard } from './task-card';
+import { InlineTaskInput } from './inline-task-input';
 import { formatLongDate } from '@/lib/date';
 import type { Status, Task } from '@/lib/types';
 import type { FieldKey } from '@/hooks/use-view-preferences';
@@ -66,7 +68,44 @@ export function TaskListView({
               </span>
             }
           >
-            <TableCard>
+            {/*
+              Below `sm` the table becomes a stack of the board's own cards.
+              A five-column table on a 375px screen can only scroll sideways,
+              which reads badly; reusing TaskCard keeps one card design across
+              both layouts. The Figma has no mobile frames, so this is a
+              documented decision rather than a match.
+            */}
+            <div className="space-y-2.5 sm:hidden">
+              {rows.map((task) => (
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  fields={fields}
+                  onDelete={onDeleteTask}
+                />
+              ))}
+
+              {addingTo === status.id ? (
+                <InlineTaskInput
+                  onCancel={() => setAddingTo(null)}
+                  onSubmit={(title) => {
+                    onCreateTask(status.id, title);
+                    setAddingTo(null);
+                  }}
+                />
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setAddingTo(status.id)}
+                  className="inline-flex items-center gap-1.5 rounded-md px-1 py-1 text-[13px] text-ink-muted transition-colors hover:text-ink"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Add Task
+                </button>
+              )}
+            </div>
+
+            <TableCard className="hidden sm:block">
               <Table>
                 <TableHead>
                   <Th className="w-full min-w-[220px]">Task</Th>
@@ -188,50 +227,6 @@ export function TaskListView({
         );
       })}
     </div>
-  );
-}
-
-/**
- * Inline row for creating a task. The design has no "new task" modal, so
- * creation happens where the "+ Add Task" affordance sits.
- */
-export function InlineTaskInput({
-  onSubmit,
-  onCancel,
-  placeholder = 'Task name, then press Enter',
-}: {
-  onSubmit: (title: string) => void;
-  onCancel: () => void;
-  placeholder?: string;
-}) {
-  const [value, setValue] = useState('');
-
-  function commit() {
-    const title = value.trim();
-    if (title) onSubmit(title);
-    else onCancel();
-  }
-
-  return (
-    <input
-      autoFocus
-      value={value}
-      placeholder={placeholder}
-      aria-label="New task title"
-      onChange={(event) => setValue(event.target.value)}
-      onBlur={commit}
-      onKeyDown={(event) => {
-        if (event.key === 'Enter') {
-          event.preventDefault();
-          commit();
-        }
-        if (event.key === 'Escape') {
-          event.preventDefault();
-          onCancel();
-        }
-      }}
-      className="h-7 w-full max-w-sm rounded-md bg-surface-subtle px-2 text-[13px] text-ink placeholder:text-ink-subtle focus:outline-none focus-visible:outline-2 focus-visible:outline-accent"
-    />
   );
 }
 
