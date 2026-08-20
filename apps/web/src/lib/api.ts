@@ -171,6 +171,8 @@ export const api = {
 
   listProjects: (q?: string) => request<Project[]>('/projects', { params: { q } }),
 
+  getProject: (id: string) => request<Project>(`/projects/${id}`),
+
   createProject: (input: {
     name: string;
     priority?: Priority;

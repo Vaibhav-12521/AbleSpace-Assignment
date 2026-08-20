@@ -46,6 +46,14 @@ export function useTask(id: string) {
   });
 }
 
+export function useProject(id: string) {
+  return useQuery({
+    queryKey: ['project', id] as const,
+    queryFn: () => api.getProject(id),
+    enabled: Boolean(id),
+  });
+}
+
 export function useProjects(q?: string) {
   return useQuery({
     queryKey: queryKeys.projects(q),
