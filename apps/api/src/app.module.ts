@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { TasksModule } from './tasks/tasks.module';
 import { ProjectsModule } from './projects/projects.module';
 import { CommentsModule } from './comments/comments.module';
+import { ResourcesModule } from './resources/resources.module';
 import { WorkspacesModule } from './workspaces/workspaces.module';
 import { HealthController } from './health/health.controller';
 
@@ -17,6 +18,7 @@ import { HealthController } from './health/health.controller';
     TasksModule,
     ProjectsModule,
     CommentsModule,
+    ResourcesModule,
   ],
   controllers: [HealthController],
 })
