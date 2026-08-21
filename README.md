@@ -297,9 +297,12 @@ cd apps/api && npm test
   into the bundle.
 
 > **Free-tier caveat:** a Render free web service spins down after about 15
-> minutes idle and takes 30 to 60 seconds to cold start. An uptime pinger
-> hitting `/api/health` every 10 minutes keeps it warm for the 45-day review
-> window.
+> minutes idle and takes 30 to 60 seconds to cold start.
+>
+> `.github/workflows/keep-api-warm.yml` handles this: a scheduled job hits
+> `/api/health` every 10 minutes, retrying to absorb a cold start, and fails
+> the run if the database is unreachable. So it keeps the demo responsive and
+> doubles as basic uptime monitoring.
 
 ---
 

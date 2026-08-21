@@ -1,0 +1,39 @@
+name: keep api warm
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: keep-api-warm
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: ping health endpoint
+        env:
+          HEALTH_URL: https://pyramid-api-q12u.onrender.com/api/health
+        run: |
+          for attempt in 1 2 3 4; do
+            code=$(curl -sS -o body.txt -w '%{http_code}' --max-time 120 "$HEALTH_URL" || echo 000)
+            echo "attempt $attempt: HTTP $code"
+            cat body.txt 2>/dev/null || true
+            echo
+
+            if [ "$code" = "200" ] && grep -q '"database":"up"' body.txt; then
+              echo "api is awake and the database is reachable"
+              exit 0
+            fi
+
+            if [ "$attempt" -lt 4 ]; then
+              echo "retrying in 30s (a cold start can take 30-60s)"
+              sleep 30
+            fi
+          done
+
+          echo "health check did not succeed after 4 attempts"
+          exit 1
