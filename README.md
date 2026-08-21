@@ -53,10 +53,8 @@ skeleton loaders shaped like the layout they replace.
 
 ## Design fidelity
 
-Colours and sizing were sampled from the PNG exports rather than estimated. A
-small PNG decoder read the raw pixels, then a frequency pass over each frame
-surfaced the palette and per-element measurements. The design turns out to sit
-on Tailwind's `neutral` scale.
+Colours and sizing were sampled from the PNG exports rather than estimated,
+which showed that the design sits on Tailwind's `neutral` scale.
 
 | Token              | Sampled   | Role                          |
 | ------------------ | --------- | ----------------------------- |
@@ -73,10 +71,11 @@ on Tailwind's `neutral` scale.
 Accent swatches are exact Tailwind 600s: amber `#d97706`, "blue" `#9333ea`,
 pink `#db2777`, rose `#e11d48`, emerald `#059669`, black `#171717`.
 
-Geometry was measured the same way. The export is roughly 0.69x the design
-frame, derived by cross-checking several known-height elements, which puts
-toolbar buttons at 32px with an 8px radius, login buttons at 36px with 14px,
-the sidebar at 250px, board columns at 280px, and table rows at 44px.
+Geometry was measured the same way. The exports are scaled down from the
+design frame by roughly 0.69, worked out by comparing elements whose real
+height is predictable, so the measurements scale back up to toolbar buttons at
+32px with an 8px radius, login buttons at 36px with 14px, a 250px sidebar,
+280px board columns and 44px table rows.
 
 ### Theme support
 
