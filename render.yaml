@@ -11,7 +11,9 @@ services:
     name: pyramid-api
     runtime: node
     plan: free
-    region: singapore
+    # Matches the Neon project's region (us-east-2) so the API and database are
+    # not talking across an ocean on every query.
+    region: ohio
     rootDir: apps/api
     # --include=dev is required: the Prisma CLI, Nest CLI and TypeScript are all
     # devDependencies, and a plain `npm ci` skips them when NODE_ENV=production.
