@@ -13,7 +13,9 @@ services:
     plan: free
     region: singapore
     rootDir: apps/api
-    buildCommand: npm ci && npx prisma generate && npx prisma migrate deploy && npm run build
+    # --include=dev is required: the Prisma CLI, Nest CLI and TypeScript are all
+    # devDependencies, and a plain `npm ci` skips them when NODE_ENV=production.
+    buildCommand: npm ci --include=dev && npx prisma generate && npx prisma migrate deploy && npm run build
     startCommand: npm run start:prod
     healthCheckPath: /api/health
     envVars:
