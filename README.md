@@ -3,8 +3,8 @@
 Full-stack task manager built to the provided Figma design for the AbleSpace
 Full Stack Developer technical assessment.
 
-- **Live app:** _<add Vercel URL>_
-- **API health:** _<add Render URL>_`/api/health`
+- **Live app:** https://able-space-assignment-eta.vercel.app
+- **API health:** https://pyramid-api-q12u.onrender.com/api/health
 - **Figma:** [Assessment Task](https://www.figma.com/design/obONCFmoTFN27V5H9PHS2X/Assessment-Task?node-id=0-1)
 
 ---
