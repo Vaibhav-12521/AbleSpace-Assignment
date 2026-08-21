@@ -23,7 +23,6 @@ export class CreateTaskDto {
   @MaxLength(5000)
   description?: string;
 
-  /** Board column to drop the task into. */
   @IsString()
   statusId!: string;
 
@@ -31,7 +30,6 @@ export class CreateTaskDto {
   @IsString()
   projectId?: string;
 
-  /** Set when creating a subtask from the task detail screen. */
   @IsOptional()
   @IsString()
   parentId?: string;

@@ -35,11 +35,6 @@ export interface TaskDetailsPanelProps {
   }) => void;
 }
 
-/**
- * The Details rail from screens 6 and 8. Every row is an editable control
- * rather than static text — the design shows the Priority and Dates popovers
- * open, so the whole panel is built to work that way.
- */
 export function TaskDetailsPanel({
   task,
   workspace,
@@ -212,7 +207,7 @@ export function TaskDetailsPanel({
                 {task.reporter.name}
               </span>
             ) : (
-              <span className="text-[12px] text-ink-subtle">—</span>
+              <span className="text-[12px] text-ink-subtle">-</span>
             )}
           </Row>
         </dl>
@@ -236,7 +231,6 @@ function Row({
   );
 }
 
-/** Popover list with tick marks; stays open so several values can be picked. */
 function MultiSelect({
   trigger,
   label,

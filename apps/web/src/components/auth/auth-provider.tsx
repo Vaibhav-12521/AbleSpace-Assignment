@@ -15,7 +15,7 @@ import type { User, Workspace } from '@/lib/types';
 interface AuthContextValue {
   user: User | null;
   workspace: Workspace | null;
-  /** True until the stored token has been checked against the API. */
+
   loading: boolean;
   loginAsGuest: () => Promise<void>;
   logout: () => void;
@@ -30,8 +30,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Restore the session on mount. A stored token can still be rejected (the
-  // guest's workspace may have been cleaned up), so it is verified, not trusted.
   useEffect(() => {
     let cancelled = false;
 

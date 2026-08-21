@@ -1,18 +1,5 @@
 @import "tailwindcss";
 
-/*
-  Design tokens.
-
-  Light values were sampled directly out of the Figma PNG exports rather than
-  eyeballed — surfaces land on Tailwind's neutral scale (#ffffff / #fafafa /
-  #f5f5f5), primary is #171717, and the six Color Mode swatches are exact
-  Tailwind 600s.
-
-  The Figma has no dark-theme frames, so the dark values are derived: same
-  token roles, same contrast relationships, inverted through the neutral scale.
-  Noted in the README as an intentional deviation.
-*/
-
 :root {
   --canvas: #f5f5f5;
   --sidebar: #fafafa;
@@ -30,7 +17,6 @@
   --primary: #171717;
   --primary-fg: #ffffff;
 
-  /* Priority scale, sampled from the list view. */
   --priority-urgent: #e24b4b;
   --priority-high: #f15b5b;
   --priority-medium: #fa8433;
@@ -80,13 +66,6 @@
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3);
 }
 
-/*
-  Color Mode. The Figma ticks "Blue" while rendering the UI in black, so the
-  app defaults to the Black mode to reproduce the screens exactly; picking any
-  other mode recolours accents. Swatch hexes are as-designed — note that the
-  option labelled "Blue" is drawn with purple-600, which is preserved here
-  rather than silently corrected.
-*/
 :root,
 :root[data-accent="black"] {
   --accent: #171717;
@@ -137,7 +116,6 @@
 :root[data-theme="dark"][data-accent="rose"] { --accent-soft: #2f0f18; }
 :root[data-theme="dark"][data-accent="emerald"] { --accent-soft: #0a2a20; }
 
-/* Expose the tokens to Tailwind's utility generator. */
 @theme inline {
   --color-canvas: var(--canvas);
   --color-sidebar: var(--sidebar);
@@ -190,7 +168,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Theme switches shouldn't animate every surface on the page at once. */
 :root {
   color-scheme: light;
 }
@@ -198,7 +175,6 @@ body {
   color-scheme: dark;
 }
 
-/* Thin scrollbars, matching the design's board and popover scroll areas. */
 @supports (scrollbar-width: thin) {
   * {
     scrollbar-width: thin;
@@ -211,11 +187,6 @@ body {
   outline-offset: 2px;
 }
 
-/*
-  Popover / menu transitions, keyed off the data-state Radix sets while
-  mounting and unmounting. Written here rather than pulling in an animation
-  plugin for four keyframes.
-*/
 @keyframes overlay-in {
   from {
     opacity: 0;

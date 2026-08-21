@@ -8,7 +8,6 @@ export interface SegmentedOption<T extends string> {
   icon?: React.ComponentType<{ className?: string }>;
 }
 
-/** The List / Board switch at the top of the Fields popover. */
 export function SegmentedControl<T extends string>({
   options,
   value,

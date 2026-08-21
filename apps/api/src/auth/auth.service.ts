@@ -24,10 +24,6 @@ export class AuthService {
     private readonly bootstrap: WorkspaceBootstrapService,
   ) {}
 
-  /**
-   * Guest login. Every click creates its own user and workspace, so two guests
-   * never see or mutate each other's board — important for a public demo URL.
-   */
   async loginAsGuest() {
     const handle = randomUUID().slice(0, 8);
     const name = GUEST_NAMES[Math.floor(Math.random() * GUEST_NAMES.length)];

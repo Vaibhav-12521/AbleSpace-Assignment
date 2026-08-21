@@ -39,7 +39,7 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           <nav className="mt-1 space-y-0.5">
             {NAV.map((item) => {
               const Icon = item.icon;
-              // Sub-routes like /tasks/<id> should keep Tasks highlighted.
+
               const active =
                 pathname === item.href || pathname.startsWith(`${item.href}/`);
 
@@ -68,7 +68,6 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-/** Fixed sidebar for tablet and up; the mobile drawer reuses SidebarContent. */
 export function Sidebar({ className }: { className?: string }) {
   return (
     <aside

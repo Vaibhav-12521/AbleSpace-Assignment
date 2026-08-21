@@ -2,13 +2,6 @@
 
 import { useState } from 'react';
 
-/**
- * Inline row for creating a task, subtask or project.
- *
- * The design has no "new item" modal anywhere, so creation happens where the
- * "+ Add …" affordance sits: type a name, press Enter. Blur commits too, so a
- * click elsewhere doesn't silently discard what was typed.
- */
 export function InlineTaskInput({
   onSubmit,
   onCancel,

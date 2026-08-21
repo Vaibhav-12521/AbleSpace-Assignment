@@ -1,19 +1,7 @@
-// Prisma schema for the Pyramid task management system.
-//
-// Modelling notes:
-// - Statuses are rows, not an enum. The board design (screen 2) has an "add column"
-//   affordance, so columns have to be data the user can extend at runtime.
-// - Subtasks are Tasks with a parentId self-relation rather than a separate table:
-//   screen 6 renders subtasks with the same columns as top-level tasks
-//   (priority / members / due date), so they carry the same shape.
-// - Members is many-to-many via TaskAssignee; the design shows avatar stacks.
-
 generator client {
   provider = "prisma-client-js"
 }
 
-// Prisma 7 takes the connection URL from prisma.config.ts (for the CLI) and
-// from the driver adapter passed to PrismaClient (at runtime), not from here.
 datasource db {
   provider = "postgresql"
 }
@@ -74,7 +62,6 @@ model WorkspaceMember {
   @@index([userId])
 }
 
-// A board column. Ordered, workspace-scoped, user-extendable.
 model Status {
   id          String   @id @default(cuid())
   workspaceId String
@@ -196,7 +183,6 @@ model TaskTeam {
   @@id([taskId, teamId])
 }
 
-// "Add document or link" row on the task detail screen.
 model Resource {
   id        String   @id @default(cuid())
   taskId    String
@@ -227,7 +213,6 @@ model Comment {
   @@index([parentId])
 }
 
-// Feeds the "Updates" panel on the task detail screen.
 model Activity {
   id        String   @id @default(cuid())
   taskId    String

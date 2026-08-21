@@ -2,14 +2,6 @@ import { Priority } from '@prisma/client';
 import { TasksService } from './tasks.service';
 import { PrismaService } from '../prisma/prisma.service';
 
-/**
- * Covers the position arithmetic in `move()` — the part most likely to go
- * subtly wrong, and the part that would corrupt board order if it did.
- *
- * Prisma is mocked rather than hit: the assertions are about which sibling
- * rows get shifted, which is expressible without a database.
- */
-
 const WORKSPACE = 'workspace-1';
 const USER = 'user-1';
 const TODO = 'status-todo';
@@ -71,7 +63,6 @@ function buildService(task: { statusId: string; position: number }) {
 
 describe('TasksService.move', () => {
   it('shifts the cards in between down when a card moves up its column', async () => {
-    // Card sits at index 3, dropped at index 1.
     const { service, tx } = buildService({ statusId: TODO, position: 3 });
 
     await service.move(WORKSPACE, USER, 'task-1', {
@@ -120,13 +111,11 @@ describe('TasksService.move', () => {
       position: 0,
     });
 
-    // Source column: everything after the vacated slot moves up.
     expect(tx.task.updateMany).toHaveBeenCalledWith({
       where: { statusId: TODO, parentId: null, position: { gt: 1 } },
       data: { position: { decrement: 1 } },
     });
 
-    // Destination column: everything at or after the insert point moves down.
     expect(tx.task.updateMany).toHaveBeenCalledWith({
       where: { statusId: DOING, parentId: null, position: { gte: 0 } },
       data: { position: { increment: 1 } },

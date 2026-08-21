@@ -1,9 +1,5 @@
 import { cn } from '@/lib/cn';
 
-/**
- * Bordered card that wraps a table, matching the list and project views.
- * Overflow-x lets wide column sets scroll instead of breaking the layout.
- */
 export function TableCard({
   className,
   children,

@@ -19,12 +19,11 @@ export interface TaskCardProps {
   task: Task;
   fields: Record<FieldKey, boolean>;
   onDelete: (task: Task) => void;
-  /** Applied to the drag preview so it reads as lifted off the board. */
+
   dragging?: boolean;
   className?: string;
 }
 
-/** Board card from screen 2: title, assignee, due date, label chips. */
 export function TaskCard({
   task,
   fields,
@@ -54,7 +53,7 @@ export function TaskCard({
         <DropdownMenu>
           <DropdownMenuTrigger
             aria-label={`Actions for ${task.title}`}
-            // Revealed on hover, but always reachable by keyboard.
+
             className="-mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-ink-subtle opacity-0 transition-opacity hover:bg-surface-hover hover:text-ink focus-visible:opacity-100 group-hover:opacity-100"
           >
             <MoreHorizontal className="h-3.5 w-3.5" />

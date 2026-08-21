@@ -2,14 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Priority } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
-/**
- * Creates the starter workspace a new guest lands in.
- *
- * The seed data mirrors the Figma board so a first-time visitor sees the
- * designed screen rather than an empty state. The empty state still exists and
- * is reachable by deleting the seeded tasks.
- */
-
 const STATUSES = [
   { name: 'To Do', color: '#8b8b8b' },
   { name: 'Doing', color: '#3b82f6' },
@@ -33,7 +25,6 @@ const LABELS = [
 
 const TEAMS = ['Engineering', 'Design', 'QA'];
 
-// [statusName, title, description, priority, labels, dayOffsetForDueDate]
 const SEED_TASKS: Array<{
   status: string;
   title: string;
@@ -140,7 +131,6 @@ const SEED_PROJECTS: Array<{ name: string; priority: Priority; dueInDays: number
 export class WorkspaceBootstrapService {
   constructor(private readonly prisma: PrismaService) {}
 
-  /** Creates a workspace with default columns, labels, teams and demo content. */
   async createStarterWorkspace(userId: string, workspaceName: string) {
     const workspace = await this.prisma.workspace.create({
       data: {
@@ -180,7 +170,6 @@ export class WorkspaceBootstrapService {
       })),
     });
 
-    // Sequential because each task needs its label join rows created with it.
     const positionByStatus = new Map<string, number>();
     for (const seed of SEED_TASKS) {
       const statusId = statusByName.get(seed.status);

@@ -12,7 +12,6 @@ export const DropdownMenuGroup = Radix.Group;
 const SURFACE =
   'z-50 min-w-[10rem] overflow-hidden rounded-xl border border-line bg-surface p-1 shadow-[var(--shadow-popover)]';
 
-// Keyframes live in globals.css and key off Radix's data-state attribute.
 const ANIMATION = 'overlay-animate';
 
 const ITEM =
@@ -43,7 +42,6 @@ export function DropdownMenuItem({
   return <Radix.Item className={cn(ITEM, className)} {...props} />;
 }
 
-/** Menu row that shows a trailing tick when selected (theme, priority, …). */
 export function DropdownMenuRadioItem({
   className,
   checked,
@@ -92,7 +90,6 @@ export function DropdownMenuSubContent({
   );
 }
 
-/** Small muted caption above a group, e.g. "Theme" or "Color Mode". */
 export function DropdownMenuLabel({
   className,
   ...props

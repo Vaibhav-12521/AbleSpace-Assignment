@@ -5,13 +5,6 @@ import { useStoredString, writeStorage } from '@/lib/persistent-store';
 
 export type ViewMode = 'list' | 'board';
 
-/**
- * Columns the Fields popover can toggle.
- *
- * The Figma lists "Members" twice (screens 3 and 7); that is a duplicate in
- * the source file, so a single Members toggle is rendered here. Noted in the
- * README.
- */
 export const FIELD_KEYS = [
   'priority',
   'members',
@@ -34,12 +27,6 @@ export const FIELD_LABELS: Record<FieldKey, string> = {
   reporter: 'Reporter',
 };
 
-/**
- * Defaults are stored per view mode because the design's two layouts show
- * different fields: the list view (screen 4) has Priority / Members / Due Date
- * columns and no Labels column, while the board (screen 2) renders labels and
- * due dates on every card. One shared map couldn't reproduce both.
- */
 const DEFAULT_FIELDS: Record<ViewMode, FieldMap> = {
   list: {
     priority: true,
@@ -85,21 +72,14 @@ function parse(raw: string | null): StoredPreferences {
       },
     };
   } catch {
-    // Corrupt JSON falls back to the defaults rather than throwing on render.
     return fallback;
   }
 }
 
-/**
- * View mode and column visibility, persisted per scope so the Tasks and
- * Projects screens remember their own layouts across refreshes.
- */
 export function useViewPreferences(scope: string) {
   const key = storageKey(scope);
   const raw = useStoredString(key);
 
-  // Parsing is memoised on the raw string so the object identity is stable
-  // between renders.
   const prefs = useMemo(() => parse(raw), [raw]);
 
   const setMode = useCallback(

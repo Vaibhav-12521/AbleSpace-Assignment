@@ -5,10 +5,6 @@ import { PrismaService } from '../prisma/prisma.service';
 export class HealthController {
   constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * Unauthenticated liveness probe. Also the endpoint an uptime pinger hits to
-   * keep the free-tier host from cold-starting on a reviewer.
-   */
   @Get()
   async check() {
     let database = 'up';

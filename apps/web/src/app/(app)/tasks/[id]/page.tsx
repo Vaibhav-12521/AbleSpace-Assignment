@@ -25,7 +25,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ErrorState, LoadingState } from '@/components/ui/states';
+import { ErrorState } from '@/components/ui/states';
+import { DetailSkeleton } from '@/components/ui/skeleton';
+import { confirmAction } from '@/lib/confirm';
 import { TaskDetailsPanel } from '@/components/tasks/task-details-panel';
 import { TaskSubtasks } from '@/components/tasks/task-subtasks';
 import { TaskComments, TaskUpdates } from '@/components/tasks/task-comments';
@@ -63,7 +65,7 @@ export default function TaskDetailPage() {
 
   useBreadcrumbs([
     { label: 'Tasks', href: '/tasks' },
-    { label: task.data?.title ?? '…' },
+    { label: task.data?.title ?? '...' },
   ]);
 
   if (task.isError) {
@@ -76,7 +78,7 @@ export default function TaskDetailPage() {
   }
 
   if (task.isPending || !task.data || !user) {
-    return <LoadingState label="Loading task" />;
+    return <DetailSkeleton />;
   }
 
   const detail = task.data;
@@ -86,7 +88,7 @@ export default function TaskDetailPage() {
       <div className="min-w-0 flex-1 space-y-5">
         <header className="space-y-2">
           <div className="flex items-start gap-2">
-            {/* Title edits commit on blur, so there is no separate save button. */}
+
             <input
               defaultValue={detail.title}
               key={detail.id + detail.title}
@@ -101,8 +103,7 @@ export default function TaskDetailPage() {
             />
 
             <div className="flex shrink-0 items-center gap-1 text-ink-muted">
-              {/* Decorative status affordances are dropped on small screens so
-                  the title keeps its width; the actionable ones stay. */}
+
               <IconBadge title="Private task" className="hidden sm:inline-flex">
                 <Lock className="h-3.5 w-3.5" />
               </IconBadge>
@@ -122,9 +123,15 @@ export default function TaskDetailPage() {
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem
                     className="text-danger"
-                    onSelect={() => {
+                    onSelect={async () => {
+                      const confirmed = await confirmAction({
+                        title: 'Delete this task?',
+                        message: `"${detail.title}" will be removed, along with its subtasks and comments.`,
+                        confirmLabel: 'Delete',
+                        destructive: true,
+                      });
+                      if (!confirmed) return;
                       deleteTask.mutate(detail.id);
-                      // Nothing left to show once the task is gone.
                       router.push('/tasks');
                     }}
                   >
@@ -132,8 +139,7 @@ export default function TaskDetailPage() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              {/* Only meaningful where the rail sits beside the content; below
-                  lg it stacks underneath and there is nothing to collapse. */}
+
               <button
                 type="button"
                 aria-label={railOpen ? 'Hide details' : 'Show details'}
@@ -150,7 +156,7 @@ export default function TaskDetailPage() {
             defaultValue={detail.description ?? ''}
             key={`${detail.id}-description`}
             rows={2}
-            placeholder="Add a description…"
+            placeholder="Add a description..."
             aria-label="Task description"
             onBlur={(event) => {
               const description = event.target.value.trim();
@@ -239,19 +245,32 @@ export default function TaskDetailPage() {
               projectId: detail.projectId ?? undefined,
             })
           }
-          onDelete={(subtask) => deleteTask.mutate(subtask.id)}
+          onDelete={async (subtask) => {
+            const confirmed = await confirmAction({
+              title: 'Delete this subtask?',
+              message: `"${subtask.title}" will be removed.`,
+              confirmLabel: 'Delete',
+              destructive: true,
+            });
+            if (confirmed) deleteTask.mutate(subtask.id);
+          }}
         />
 
         <TaskComments
           comments={detail.comments}
           currentUser={user}
           onCreate={(input) => createComment.mutate(input)}
-          onDelete={(id) => deleteComment.mutate(id)}
+          onDelete={async (id) => {
+            const confirmed = await confirmAction({
+              title: 'Delete this comment?',
+              confirmLabel: 'Delete',
+              destructive: true,
+            });
+            if (confirmed) deleteComment.mutate(id);
+          }}
         />
       </div>
 
-      {/* Collapsing only applies from lg up, where the toggle exists — below
-          that the rail always stacks under the content. */}
       <div className={cn('space-y-4 lg:w-[280px]', !railOpen && 'lg:hidden')}>
         <TaskDetailsPanel
           task={detail}
@@ -302,7 +321,6 @@ function IconBadge({
   );
 }
 
-/** "Add document or link…" affordance from the Resources row. */
 function AddResource({
   onAdd,
   error,
@@ -317,7 +335,7 @@ function AddResource({
     <Popover>
       <PopoverTrigger className="inline-flex items-center gap-1 rounded-md px-1 py-0.5 text-[12px] text-ink-subtle transition-colors hover:text-ink-muted">
         <Plus className="h-3 w-3" />
-        Add document or link…
+        Add document or link...
       </PopoverTrigger>
       <PopoverContent align="start" className="w-[260px] space-y-2 p-3">
         <Input

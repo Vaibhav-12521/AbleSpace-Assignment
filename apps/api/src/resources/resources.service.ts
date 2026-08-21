@@ -17,7 +17,7 @@ export class ResourcesService {
       data: {
         taskId,
         url: dto.url,
-        // Fall back to the URL's host so a link always has something readable.
+
         label: dto.label?.trim() || hostOf(dto.url),
       },
     });

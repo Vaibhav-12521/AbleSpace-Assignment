@@ -19,14 +19,6 @@ export interface TaskCommentsProps {
   onDelete: (id: string) => void;
 }
 
-/**
- * Comment thread from screen 6: top-level comments each with an inline reply
- * box, plus a composer at the bottom.
- *
- * The Figma labels this section "Subtasks" — the same heading it uses for the
- * subtask table directly above. That is a duplicate in the source file, so it
- * is labelled "Comments" here and noted in the README.
- */
 export function TaskComments({
   comments,
   currentUser,
@@ -162,7 +154,6 @@ function Composer({
         aria-label={placeholder}
         onChange={(event) => setValue(event.target.value)}
         onKeyDown={(event) => {
-          // Enter sends; Shift+Enter is left free for a future multiline field.
           if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
             submit();
@@ -185,7 +176,6 @@ function Composer({
   );
 }
 
-/** "Updates" activity feed from the bottom of the Details rail. */
 export function TaskUpdates({ activities }: { activities: Activity[] }) {
   if (activities.length === 0) return null;
 

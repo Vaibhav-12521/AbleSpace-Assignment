@@ -18,8 +18,6 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  // suppressHydrationWarning: ThemeScript mutates <html>'s data attributes
-  // before React hydrates, so server and client markup differ by design.
   return (
     <html lang="en" suppressHydrationWarning>
       <head>

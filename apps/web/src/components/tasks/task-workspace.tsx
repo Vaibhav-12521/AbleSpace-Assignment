@@ -14,23 +14,20 @@ import { TaskToolbar } from './task-toolbar';
 import { TaskListView } from './task-list-view';
 import { TaskBoardView } from './task-board-view';
 import { TaskFilterMenu } from './task-filter-menu';
-import { EmptyState, ErrorState, LoadingState } from '@/components/ui/states';
+import { EmptyState, ErrorState } from '@/components/ui/states';
+import { BoardSkeleton, ListSkeleton } from '@/components/ui/skeleton';
+import { confirmAction } from '@/lib/confirm';
 import type { TaskFilters } from '@/lib/api';
 import type { Task } from '@/lib/types';
 
 export interface TaskWorkspaceProps {
   title: string;
-  /** Scopes the query and new tasks to one project; omitted on /tasks. */
+
   projectId?: string;
-  /** Persists view mode and column choices separately per screen. */
+
   preferenceScope: string;
 }
 
-/**
- * The Tasks screen, shared by /tasks and a project's own task list (screen 12).
- * Both render the same toolbar, board and list; only the scope differs, so the
- * whole thing lives here rather than being duplicated per route.
- */
 export function TaskWorkspace({
   title,
   projectId,
@@ -61,8 +58,14 @@ export function TaskWorkspace({
     createTask.mutate({ title: taskTitle, statusId, projectId });
   }
 
-  function handleDelete(task: Task) {
-    deleteTask.mutate(task.id);
+  async function handleDelete(task: Task) {
+    const confirmed = await confirmAction({
+      title: 'Delete this task?',
+      message: `"${task.title}" will be removed, along with its subtasks and comments.`,
+      confirmLabel: 'Delete',
+      destructive: true,
+    });
+    if (confirmed) deleteTask.mutate(task.id);
   }
 
   const hasSearch = Boolean(debouncedSearch);
@@ -100,7 +103,11 @@ export function TaskWorkspace({
           }}
         />
       ) : bootstrap.isPending || (tasks.isPending && !tasks.data) ? (
-        <LoadingState label="Loading tasks" />
+        mode === 'board' ? (
+          <BoardSkeleton />
+        ) : (
+          <ListSkeleton />
+        )
       ) : statuses.length === 0 ? (
         <EmptyState
           title="No columns yet"
@@ -111,7 +118,7 @@ export function TaskWorkspace({
           title="No matching tasks"
           description={
             hasSearch
-              ? `Nothing matched “${debouncedSearch}”.`
+              ? `Nothing matched "${debouncedSearch}".`
               : 'No tasks match the current filters.'
           }
         />

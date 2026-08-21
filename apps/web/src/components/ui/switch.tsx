@@ -3,10 +3,6 @@
 import * as RadixSwitch from '@radix-ui/react-switch';
 import { cn } from '@/lib/cn';
 
-/**
- * The Fields menu draws these as small rounded squares with a check, not as
- * sliding tracks — see screens 3 and 7.
- */
 export function Switch({
   checked,
   onCheckedChange,

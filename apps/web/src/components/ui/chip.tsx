@@ -3,7 +3,6 @@ import { cn } from '@/lib/cn';
 import { formatShortDate, isOverdue } from '@/lib/date';
 import type { Label } from '@/lib/types';
 
-/** Label pill with the tag glyph, as used on board cards and task detail. */
 export function LabelChip({
   label,
   className,
@@ -24,10 +23,6 @@ export function LabelChip({
   );
 }
 
-/**
- * Due-date pill. The design renders it in the red tint regardless of whether
- * the date has passed, so overdue only changes the tooltip, not the colour.
- */
 export function DueDateBadge({
   date,
   className,

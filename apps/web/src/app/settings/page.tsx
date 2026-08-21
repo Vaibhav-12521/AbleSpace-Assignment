@@ -22,11 +22,6 @@ const SECTIONS = [
 
 type SectionId = (typeof SECTIONS)[number]['id'];
 
-/**
- * Settings screen from screen 13. It sits outside the app shell because the
- * design replaces the whole sidebar with a settings-only one, headed by a
- * "Back to app" link.
- */
 export default function SettingsPage() {
   const router = useRouter();
   const { user, loading, logout, patchUser } = useAuth();
@@ -97,8 +92,7 @@ export default function SettingsPage() {
       </aside>
 
       <main className="min-w-0 flex-1 overflow-auto px-4 py-8 sm:px-8">
-        {/* The design's settings sidebar is desktop-only, so small screens get
-            a horizontal section switcher instead of losing navigation. */}
+
         <div className="mb-6 flex items-center gap-1.5 md:hidden">
           <Link
             href="/tasks"
@@ -143,7 +137,6 @@ function ProfileSection({
   const [saving, setSaving] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Each field saves on blur, matching the design's lack of a save button.
   async function save(field: 'name' | 'title' | 'username', value: string) {
     setSaving(field);
     setError(null);

@@ -1,10 +1,3 @@
-/**
- * Wire types shared with the NestJS API.
- *
- * Hand-written rather than generated so the client depends on the HTTP
- * contract, not on Prisma's model types.
- */
-
 export type Priority =
   | 'NO_PRIORITY'
   | 'URGENT'

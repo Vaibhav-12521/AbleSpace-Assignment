@@ -38,7 +38,7 @@ export function Avatar({ name, src, size = 'md', className }: AvatarProps) {
       ) : null}
       <RadixAvatar.Fallback
         className="flex h-full w-full items-center justify-center bg-surface-subtle font-medium text-ink-muted uppercase"
-        // Rendered immediately when there is no image to wait for.
+
         delayMs={src ? 300 : undefined}
       >
         {initials(name)}
@@ -54,7 +54,6 @@ export interface AvatarGroupProps {
   className?: string;
 }
 
-/** Overlapping avatar stack with a "+N" pill once the list runs past `max`. */
 export function AvatarGroup({
   people,
   size = 'md',

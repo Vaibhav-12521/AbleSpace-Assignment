@@ -35,12 +35,6 @@ export interface TaskFilterMenuProps {
 
 type ArrayFilterKey = 'statusIds' | 'assigneeIds' | 'labelIds' | 'teamIds';
 
-
-/**
- * Filter menu from screen 11: a menu of facets, each opening a submenu of
- * multi-selectable values. Selections are additive within a facet and
- * intersected across facets, which is how the API's query params behave.
- */
 export function TaskFilterMenu({
   filters,
   onChange,
@@ -98,7 +92,6 @@ export function TaskFilterMenu({
                 key={status.id}
                 checked={filters.statusIds?.includes(status.id) ?? false}
                 onSelect={(event) => {
-                  // Keep the menu open so several values can be picked.
                   event.preventDefault();
                   toggleArray('statusIds', status.id);
                 }}
@@ -169,7 +162,7 @@ export function TaskFilterMenu({
                 checked={filters.due === preset}
                 onSelect={(event) => {
                   event.preventDefault();
-                  // Presets are mutually exclusive, so re-picking clears it.
+
                   onChange({
                     ...filters,
                     due: filters.due === preset ? undefined : preset,

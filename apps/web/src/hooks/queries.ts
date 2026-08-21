@@ -7,6 +7,7 @@ import {
   type UseQueryOptions,
 } from '@tanstack/react-query';
 import { api, type TaskFilters, type TaskInput } from '@/lib/api';
+import { pushToast } from '@/lib/toast';
 import type { Priority, Project, Task, TaskDetail, WorkspaceBootstrap } from '@/lib/types';
 
 export const queryKeys = {
@@ -22,7 +23,7 @@ export function useBootstrap(
   return useQuery({
     queryKey: queryKeys.bootstrap,
     queryFn: api.bootstrap,
-    // Columns, labels and members change rarely; don't refetch on every mount.
+
     staleTime: 5 * 60_000,
     ...options,
   });
@@ -32,8 +33,7 @@ export function useTasks(filters: TaskFilters = {}) {
   return useQuery({
     queryKey: queryKeys.tasks(filters),
     queryFn: () => api.listTasks(filters),
-    // Keeps the previous list on screen while a new filter query is in flight,
-    // so typing in the search box doesn't flash an empty table.
+
     placeholderData: (previous) => previous,
   });
 }
@@ -62,7 +62,6 @@ export function useProjects(q?: string) {
   });
 }
 
-/** Invalidates every task list regardless of which filters produced it. */
 function invalidateTasks(client: ReturnType<typeof useQueryClient>) {
   return client.invalidateQueries({ queryKey: ['tasks'] });
 }
@@ -91,15 +90,13 @@ export function useDeleteTask() {
   const client = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => api.deleteTask(id),
-    onSuccess: () => invalidateTasks(client),
+    onSuccess: () => {
+      pushToast({ title: 'Task deleted', variant: 'success' });
+      return invalidateTasks(client);
+    },
   });
 }
 
-/**
- * Board drag-and-drop. Applies the move to every cached task list first so the
- * card stays where it was dropped instead of snapping back while the request
- * is in flight; the snapshot is restored if the server rejects it.
- */
 export function useMoveTask() {
   const client = useQueryClient();
 
@@ -136,7 +133,6 @@ export function useMoveTask() {
   });
 }
 
-/** Mirrors the server's reordering so the optimistic view matches the result. */
 function reorder(
   tasks: Task[],
   id: string,
@@ -201,7 +197,10 @@ export function useDeleteProject() {
   const client = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => api.deleteProject(id),
-    onSuccess: () => client.invalidateQueries({ queryKey: ['projects'] }),
+    onSuccess: () => {
+      pushToast({ title: 'Project deleted', variant: 'success' });
+      return client.invalidateQueries({ queryKey: ['projects'] });
+    },
   });
 }
 

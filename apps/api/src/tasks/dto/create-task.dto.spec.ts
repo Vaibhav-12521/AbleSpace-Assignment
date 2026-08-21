@@ -3,7 +3,6 @@ import { validate } from 'class-validator';
 import { CreateTaskDto } from './create-task.dto';
 import { QueryTasksDto } from './query-tasks.dto';
 
-/** Collects the failing property names so assertions read clearly. */
 async function failingFields(dto: object) {
   const errors = await validate(dto, { whitelist: true });
   return errors.map((error) => error.property);

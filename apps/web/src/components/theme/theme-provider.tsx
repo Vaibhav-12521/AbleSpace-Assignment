@@ -23,9 +23,6 @@ interface ThemeContextValue {
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // localStorage is the single source of truth, read through an external
-  // store — so there is no local copy to keep in sync, and other tabs update
-  // this one automatically.
   const storedTheme = useStoredString(THEME_STORAGE_KEY);
   const storedColorMode = useStoredString(COLOR_MODE_STORAGE_KEY);
 
@@ -34,8 +31,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     ? storedColorMode
     : DEFAULT_COLOR_MODE;
 
-  // ThemeScript sets these before first paint; these effects keep <html> in
-  // step with later changes, including ones made in another tab.
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);

@@ -22,7 +22,9 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { EmptyState, ErrorState, LoadingState } from '@/components/ui/states';
+import { EmptyState, ErrorState } from '@/components/ui/states';
+import { ListSkeleton } from '@/components/ui/skeleton';
+import { confirmAction } from '@/lib/confirm';
 import { TaskToolbar } from '@/components/tasks/task-toolbar';
 import { InlineTaskInput } from '@/components/tasks/inline-task-input';
 import {
@@ -41,14 +43,6 @@ import { useViewPreferences } from '@/hooks/use-view-preferences';
 import { formatLongDate } from '@/lib/date';
 import type { Priority } from '@/lib/types';
 
-/**
- * Projects screen from screens 9-11: a flat table with Priority, Lead and
- * Due Date, plus an inline row for adding a project.
- *
- * The Figma's primary button reads "Add Project" on screen 9 but "Add Task" on
- * screens 10 and 11. "Add Project" is used here since that is what the button
- * does; noted in the README.
- */
 export default function ProjectsPage() {
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebouncedValue(search, 250);
@@ -72,7 +66,7 @@ export default function ProjectsPage() {
         fields={fields}
         onFieldChange={toggleField}
         addLabel="Add Project"
-        // Projects only have the one layout in the design.
+
         showModeSwitch={false}
         onAdd={() => setAdding(true)}
       />
@@ -83,11 +77,11 @@ export default function ProjectsPage() {
           onRetry={() => void projects.refetch()}
         />
       ) : projects.isPending && !projects.data ? (
-        <LoadingState label="Loading projects" />
+        <ListSkeleton groups={1} rows={3} />
       ) : debouncedSearch && (projects.data?.length ?? 0) === 0 ? (
         <EmptyState
           title="No matching projects"
-          description={`Nothing matched “${debouncedSearch}”.`}
+          description={`Nothing matched "${debouncedSearch}".`}
         />
       ) : (
         <div className="px-4 pb-10 sm:px-6">
@@ -155,14 +149,14 @@ export default function ProjectsPage() {
                             size="md"
                           />
                         ) : (
-                          <span className="text-ink-subtle">—</span>
+                          <span className="text-ink-subtle">-</span>
                         )}
                       </Td>
                     )}
 
                     {fields.dueDate && (
                       <Td className="text-ink-muted">
-                        {project.dueDate ? formatLongDate(project.dueDate) : '—'}
+                        {project.dueDate ? formatLongDate(project.dueDate) : '-'}
                       </Td>
                     )}
 
@@ -182,7 +176,15 @@ export default function ProjectsPage() {
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className="text-danger"
-                            onSelect={() => deleteProject.mutate(project.id)}
+                            onSelect={async () => {
+                              const confirmed = await confirmAction({
+                                title: 'Delete this project?',
+                                message: `"${project.name}" and its ${project._count.tasks} task(s) will be removed.`,
+                                confirmLabel: 'Delete',
+                                destructive: true,
+                              });
+                              if (confirmed) deleteProject.mutate(project.id);
+                            }}
                           >
                             Delete
                           </DropdownMenuItem>

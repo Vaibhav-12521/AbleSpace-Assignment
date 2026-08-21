@@ -25,7 +25,6 @@ const PRIORITY_TEXT: Record<Priority, string> = {
   LOW: 'text-priority-low',
 };
 
-/** How many of the three ascending bars are filled at each level. */
 const FILLED_BARS: Record<Priority, number> = {
   NO_PRIORITY: 0,
   URGENT: 3,
@@ -49,7 +48,6 @@ export function PriorityIcon({
 }) {
   const filled = FILLED_BARS[priority];
 
-  // No Priority reads as a single muted dash in the design rather than bars.
   if (priority === 'NO_PRIORITY') {
     return (
       <svg
@@ -77,7 +75,7 @@ export function PriorityIcon({
           height={bar.height}
           rx="1"
           fill="currentColor"
-          // Unfilled bars stay visible but recede, as in the design.
+
           opacity={index < filled ? 1 : 0.25}
         />
       ))}

@@ -5,10 +5,6 @@ import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/cn';
 
-/**
- * "▾ To Do" group header used by the list and project views. The chevron
- * rotates rather than swapping icons so the transition stays smooth.
- */
 export function CollapsibleSection({
   title,
   count,

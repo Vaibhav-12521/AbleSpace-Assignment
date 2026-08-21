@@ -10,11 +10,6 @@ import {
 export class WorkspacesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * One call that hydrates everything the shell needs on boot: board columns,
-   * label and team vocabularies, and the member list. Saves the client four
-   * round-trips before it can paint the toolbar menus.
-   */
   async getBootstrap(workspaceId: string) {
     const [statuses, labels, teams, members] = await Promise.all([
       this.prisma.status.findMany({
@@ -81,7 +76,6 @@ export class WorkspacesService {
 
     const taskCount = await this.prisma.task.count({ where: { statusId: id } });
     if (taskCount > 0) {
-      // Deleting would orphan tasks; the UI should ask the user to move them first.
       throw new BadRequestException(
         `Move or delete the ${taskCount} task(s) in this column first`,
       );

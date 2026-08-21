@@ -10,7 +10,6 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { MoveTaskDto } from './dto/move-task.dto';
 import { QueryTasksDto, type DueFilter } from './dto/query-tasks.dto';
 
-/** Everything the board card and list row need, in one shape. */
 const TASK_INCLUDE = {
   status: true,
   assignees: {
@@ -34,7 +33,6 @@ export class TasksService {
 
   async findAll(workspaceId: string, query: QueryTasksDto) {
     const where: Prisma.TaskWhereInput = {
-      // Scoping through status keeps every read inside the caller's workspace.
       status: { workspaceId },
       parentId: null,
     };
@@ -116,7 +114,6 @@ export class TasksService {
     await this.assertStatusInWorkspace(workspaceId, dto.statusId);
     if (dto.parentId) await this.assertTaskInWorkspace(workspaceId, dto.parentId);
 
-    // Append to the end of the column unless a position was given.
     const position =
       dto.position ?? (await this.nextPosition(dto.statusId, dto.parentId));
 
@@ -170,8 +167,7 @@ export class TasksService {
         startDate: dto.startDate ? new Date(dto.startDate) : undefined,
         dueDate: dto.dueDate ? new Date(dto.dueDate) : undefined,
         position: dto.position,
-        // Relation arrays are treated as a full replacement, matching how the
-        // UI edits them (a multi-select commits the whole set).
+
         assignees: dto.assigneeIds
           ? {
               deleteMany: {},
@@ -209,10 +205,6 @@ export class TasksService {
     return toTaskResponse(task);
   }
 
-  /**
-   * Board drag-and-drop. Runs in a transaction so the sibling re-numbering and
-   * the move itself cannot half-apply and leave two cards on one position.
-   */
   async move(workspaceId: string, userId: string, id: string, dto: MoveTaskDto) {
     const task = await this.assertTaskInWorkspace(workspaceId, id);
     await this.assertStatusInWorkspace(workspaceId, dto.statusId);
@@ -220,7 +212,6 @@ export class TasksService {
     const movedWithinSameColumn = task.statusId === dto.statusId;
 
     await this.prisma.$transaction(async (tx) => {
-      // Close the gap left behind in the source column.
       if (!movedWithinSameColumn) {
         await tx.task.updateMany({
           where: {
@@ -250,7 +241,6 @@ export class TasksService {
         });
       }
 
-      // Open a slot in the destination column.
       if (!movedWithinSameColumn) {
         await tx.task.updateMany({
           where: {
@@ -340,13 +330,6 @@ export class TasksService {
   }
 }
 
-/**
- * Translates a due-date preset into a where clause.
- *
- * Boundaries are computed from the server's midnight. A production build would
- * take the caller's timezone as a parameter; for a single-region demo the
- * server's local day is close enough, and it is noted in the README.
- */
 function dueDateWhere(due: DueFilter): Prisma.TaskWhereInput {
   if (due === 'none') return { dueDate: null };
 
@@ -361,7 +344,6 @@ function dueDateWhere(due: DueFilter): Prisma.TaskWhereInput {
   return { dueDate: { gte: startOfToday, lt: end } };
 }
 
-/** Flattens Prisma's join rows into the shape the UI consumes. */
 function toTaskResponse(task: TaskWithRelations) {
   return {
     id: task.id,

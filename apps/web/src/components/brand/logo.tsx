@@ -1,6 +1,5 @@
 import { cn } from '@/lib/cn';
 
-/** The Pyramid mark: white glyph on a near-black rounded square. */
 export function LogoMark({ className }: { className?: string }) {
   return (
     <span

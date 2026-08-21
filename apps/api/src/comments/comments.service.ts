@@ -23,7 +23,7 @@ export class CommentsService {
       if (!parent) {
         throw new BadRequestException('Cannot reply to a comment on another task');
       }
-      // One level of nesting only, matching the design's reply thread.
+
       if (parent.parentId) {
         throw new BadRequestException('Replies cannot be nested further');
       }

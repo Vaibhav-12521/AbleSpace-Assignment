@@ -9,10 +9,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      // Strip properties the DTO doesn't declare instead of persisting them.
       whitelist: true,
       forbidNonWhitelisted: true,
-      // Lets @Type()/@Transform() run so query strings arrive as real types.
+
       transform: true,
       transformOptions: { enableImplicitConversion: false },
     }),

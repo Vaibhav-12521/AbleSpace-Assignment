@@ -22,18 +22,11 @@ const WEEKDAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 export interface CalendarProps {
   selected?: Date | null;
   onSelect: (date: Date) => void;
-  /** Month shown on first render when nothing is selected yet. */
+
   defaultMonth?: Date;
   className?: string;
 }
 
-/**
- * Month grid matching screen 8: caption with prev/next chevrons, two-letter
- * weekday row, selected day as a filled circle, adjacent-month days muted.
- *
- * Hand-rolled rather than pulled from a date-picker library — the design only
- * needs single-date selection, and this keeps full control over the markup.
- */
 export function Calendar({
   selected,
   onSelect,
@@ -44,7 +37,6 @@ export function Calendar({
     () => startOfMonth(selected ?? defaultMonth ?? new Date()),
   );
 
-  // Always six rows so the popover doesn't resize between months.
   const days = useMemo(() => {
     const start = startOfWeek(startOfMonth(month));
     const end = endOfWeek(endOfMonth(month));
@@ -96,8 +88,7 @@ export function Calendar({
               key={day.toISOString()}
               type="button"
               onClick={() => onSelect(day)}
-              // aria-pressed, not aria-selected: the button role doesn't
-              // support aria-selected outside a listbox/grid.
+
               aria-pressed={isSelected}
               aria-label={format(day, 'd MMMM yyyy')}
               className={cn(

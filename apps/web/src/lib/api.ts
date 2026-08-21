@@ -30,8 +30,6 @@ export function setToken(token: string | null) {
     if (token) localStorage.setItem(TOKEN_STORAGE_KEY, token);
     else localStorage.removeItem(TOKEN_STORAGE_KEY);
   } catch {
-    // Storage can be unavailable in private mode; the session then lasts
-    // only as long as the tab.
   }
 }
 
@@ -70,7 +68,6 @@ async function request<T>(
   const response = await fetch(url, { ...init, headers });
 
   if (!response.ok) {
-    // Nest's ValidationPipe returns `message` as an array of field errors.
     let message = response.statusText;
     try {
       const body = await response.json();
@@ -78,7 +75,6 @@ async function request<T>(
         ? body.message.join(', ')
         : (body.message ?? message);
     } catch {
-      // Non-JSON error body (a gateway timeout, say) — keep the status text.
     }
     throw new ApiError(message, response.status);
   }

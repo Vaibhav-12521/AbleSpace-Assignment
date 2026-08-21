@@ -8,8 +8,6 @@ export class PrismaService
   implements OnModuleInit, OnModuleDestroy
 {
   constructor() {
-    // Prisma 7 connects through a driver adapter rather than a `url` in the
-    // schema. The pg pool is what actually holds the connections.
     super({
       adapter: new PrismaPg({
         connectionString: process.env.DATABASE_URL,

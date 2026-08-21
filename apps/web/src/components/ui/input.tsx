@@ -22,10 +22,6 @@ export const Input = forwardRef<
   );
 });
 
-/**
- * Read-only-looking field used on the Settings profile form, where the design
- * shows values sitting in a filled box rather than a bordered input.
- */
 export const FieldInput = forwardRef<
   HTMLInputElement,
   React.InputHTMLAttributes<HTMLInputElement>

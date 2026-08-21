@@ -25,7 +25,6 @@ import { InlineTaskInput } from './inline-task-input';
 import { formatLongDate } from '@/lib/date';
 import type { Task } from '@/lib/types';
 
-/** Subtasks table from screen 6 — same columns as the top-level list view. */
 export function TaskSubtasks({
   subtasks,
   onCreate,
@@ -69,11 +68,11 @@ export function TaskSubtasks({
                   {subtask.assignees.length > 0 ? (
                     <AvatarGroup people={subtask.assignees} size="md" />
                   ) : (
-                    <span className="text-ink-subtle">—</span>
+                    <span className="text-ink-subtle">-</span>
                   )}
                 </Td>
                 <Td className="text-ink-muted">
-                  {subtask.dueDate ? formatLongDate(subtask.dueDate) : '—'}
+                  {subtask.dueDate ? formatLongDate(subtask.dueDate) : '-'}
                 </Td>
                 <Td align="right">
                   <DropdownMenu>

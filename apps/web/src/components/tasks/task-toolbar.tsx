@@ -24,9 +24,9 @@ export interface TaskToolbarProps {
   onFieldChange: (key: FieldKey, value: boolean) => void;
   onAdd: () => void;
   addLabel?: string;
-  /** Rendered inside the filter popover; varies by screen. */
+
   filterContent?: React.ReactNode;
-  /** Hides the List/Board switch on screens that only have one layout. */
+
   showModeSwitch?: boolean;
 }
 
@@ -46,7 +46,6 @@ export function TaskToolbar({
   const [searchOpen, setSearchOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // ⌘F / Ctrl+F opens the inline search, as hinted in the design's shortcut pill.
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'f') {
@@ -78,7 +77,7 @@ export function TaskToolbar({
               ref={inputRef}
               value={search}
               onChange={(event) => onSearchChange(event.target.value)}
-              placeholder="Search tasks…"
+              placeholder="Search tasks..."
               aria-label="Search tasks"
               className="h-8 w-[180px] rounded-lg border border-line bg-surface pr-14 pl-8 text-[13px] text-ink placeholder:text-ink-subtle focus:outline-none focus-visible:outline-2 focus-visible:outline-accent sm:w-[230px]"
             />
@@ -160,7 +159,6 @@ export function TaskToolbar({
   );
 }
 
-/** Small column-layout glyph used on the Fields button. */
 function FieldsGlyph({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 14 14" className={cn('h-3.5 w-3.5', className)} aria-hidden="true">

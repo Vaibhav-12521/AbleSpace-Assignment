@@ -44,13 +44,6 @@ export interface TaskBoardViewProps {
   onDeleteStatus?: (status: Status) => void;
 }
 
-/**
- * Board layout from screen 2.
- *
- * Columns are #f5f5f5 containers holding white cards; drag-and-drop is
- * @dnd-kit with a sortable context per column, so a card can be reordered
- * inside a column or dropped into another one.
- */
 export function TaskBoardView({
   statuses,
   tasks,
@@ -63,8 +56,7 @@ export function TaskBoardView({
   const [draggingId, setDraggingId] = useState<string | null>(null);
 
   const sensors = useSensors(
-    // A small distance threshold keeps a click on the card's link from
-    // being swallowed as a drag.
+
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
@@ -109,8 +101,6 @@ export function TaskBoardView({
 
     let position = target.index;
 
-    // Dropping onto a card in the same column: account for the moving card
-    // vacating its own slot before the insert point.
     if (task.statusId === target.statusId && currentIndex !== -1) {
       if (currentIndex === position) return;
       if (currentIndex < position) position -= 1;
@@ -143,8 +133,6 @@ export function TaskBoardView({
         ))}
       </div>
 
-      {/* Rendered in a portal-like overlay so the card follows the cursor
-          without the column's overflow clipping it. */}
       <DragOverlay dropAnimation={null}>
         {draggingTask && (
           <div className="w-[260px]">
@@ -178,7 +166,6 @@ function BoardColumn({
 }) {
   const [adding, setAdding] = useState(false);
 
-  // Makes the column itself a drop target so empty columns still accept cards.
   const { setNodeRef, isOver } = useDroppable({
     id: `column:${status.id}`,
     data: { type: 'column', statusId: status.id },
@@ -245,6 +232,17 @@ function BoardColumn({
               onDelete={onDeleteTask}
             />
           ))}
+
+          {tasks.length === 0 && (
+            <p
+              className={cn(
+                'rounded-lg border border-dashed border-line px-2.5 py-6 text-center text-[12px] text-ink-subtle transition-colors',
+                isOver && 'border-accent/50 text-ink-muted',
+              )}
+            >
+              Drop tasks here
+            </p>
+          )}
         </div>
       </SortableContext>
 
@@ -286,7 +284,7 @@ function SortableTaskCard({
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform), transition }}
-      // The original slot fades while its overlay copy is under the cursor.
+
       className={cn(isDragging && 'opacity-40')}
       {...attributes}
       {...listeners}
@@ -296,11 +294,6 @@ function SortableTaskCard({
   );
 }
 
-/**
- * Turns whatever the pointer released over into a column plus an insert index.
- * `over` is either a card id (drop between cards) or a `column:<id>` sentinel
- * (drop into empty space at the end of a column).
- */
 function resolveDropTarget(
   overId: string,
   byStatus: Map<string, Task[]>,

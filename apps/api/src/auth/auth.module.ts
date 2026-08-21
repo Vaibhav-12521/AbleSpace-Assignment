@@ -17,8 +17,6 @@ import { WorkspaceBootstrapService } from '../workspaces/workspace-bootstrap.ser
       useFactory: (config: ConfigService) => ({
         secret: config.getOrThrow<string>('JWT_SECRET'),
         signOptions: {
-          // jsonwebtoken types this as a duration literal (e.g. "30d"), not a
-          // plain string, so the env-sourced value needs the narrowing cast.
           expiresIn: config.get<string>(
             'JWT_EXPIRES_IN',
             '30d',

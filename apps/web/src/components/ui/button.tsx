@@ -11,7 +11,6 @@ export interface ButtonProps
 }
 
 const VARIANTS: Record<Variant, string> = {
-  // #171717 fill, sampled from the Figma "+ Add Task" button.
   primary:
     'bg-primary text-primary-fg hover:bg-primary/90 disabled:hover:bg-primary',
   outline:
@@ -21,7 +20,6 @@ const VARIANTS: Record<Variant, string> = {
   danger: 'bg-danger-soft text-danger hover:brightness-95',
 };
 
-// Radii come from measuring the exports: ~8px on a 32px toolbar button.
 const SIZES: Record<Size, string> = {
   sm: 'h-7 gap-1.5 rounded-lg px-2.5 text-xs',
   md: 'h-8 gap-1.5 rounded-lg px-3 text-[13px]',

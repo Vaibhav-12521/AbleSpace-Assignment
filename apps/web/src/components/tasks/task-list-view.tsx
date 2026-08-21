@@ -36,10 +36,6 @@ export interface TaskListViewProps {
   onDeleteTask: (task: Task) => void;
 }
 
-/**
- * List layout from screen 4: one collapsible group per board column, each a
- * table whose columns follow the Fields popover.
- */
 export function TaskListView({
   statuses,
   tasks,
@@ -47,7 +43,6 @@ export function TaskListView({
   onCreateTask,
   onDeleteTask,
 }: TaskListViewProps) {
-  // Which group currently has its inline "new task" input open.
   const [addingTo, setAddingTo] = useState<string | null>(null);
 
   return (
@@ -68,13 +63,7 @@ export function TaskListView({
               </span>
             }
           >
-            {/*
-              Below `sm` the table becomes a stack of the board's own cards.
-              A five-column table on a 375px screen can only scroll sideways,
-              which reads badly; reusing TaskCard keeps one card design across
-              both layouts. The Figma has no mobile frames, so this is a
-              documented decision rather than a match.
-            */}
+
             <div className="space-y-2.5 sm:hidden">
               {rows.map((task) => (
                 <TaskCard
@@ -142,7 +131,7 @@ export function TaskListView({
                           {task.assignees.length > 0 ? (
                             <AvatarGroup people={task.assignees} size="md" />
                           ) : (
-                            <span className="text-ink-subtle">—</span>
+                            <span className="text-ink-subtle">-</span>
                           )}
                         </Td>
                       )}
@@ -164,13 +153,13 @@ export function TaskListView({
 
                       {fields.reporter && (
                         <Td className="text-ink-muted">
-                          {task.reporter?.name ?? '—'}
+                          {task.reporter?.name ?? '-'}
                         </Td>
                       )}
 
                       {fields.dueDate && (
                         <Td className="text-ink-muted">
-                          {task.dueDate ? formatLongDate(task.dueDate) : '—'}
+                          {task.dueDate ? formatLongDate(task.dueDate) : '-'}
                         </Td>
                       )}
 
@@ -230,7 +219,6 @@ export function TaskListView({
   );
 }
 
-/** Task column + Actions column + however many optional fields are visible. */
 function countColumns(fields: Record<FieldKey, boolean>) {
   const optional = (['priority', 'members', 'labels', 'reporter', 'dueDate'] as const)
     .filter((key) => fields[key]).length;

@@ -6,11 +6,6 @@ import { useAuth } from '@/components/auth/auth-provider';
 import { AppShell } from '@/components/shell/app-shell';
 import { LogoMark } from '@/components/brand/logo';
 
-/**
- * Guards every signed-in route. The session lives in localStorage, so the
- * check has to run on the client; unauthenticated visitors are bounced to
- * /login rather than briefly seeing an empty shell.
- */
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { user, loading } = useAuth();

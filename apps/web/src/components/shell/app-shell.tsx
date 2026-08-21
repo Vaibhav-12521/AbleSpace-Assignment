@@ -26,14 +26,6 @@ export function useShell() {
   return ctx;
 }
 
-/**
- * Lets a page publish breadcrumbs into the shell header (screen 12) without
- * the layout needing to know which route is rendering.
- *
- * Takes plain data, not JSX: a JSX argument would be a fresh object on every
- * render, so the effect would re-run forever. Serialising the items gives the
- * effect a value that only changes when the crumbs actually change.
- */
 export function useBreadcrumbs(items: BreadcrumbItem[]) {
   const { setBreadcrumbs } = useShell();
   const serialised = JSON.stringify(items);
@@ -45,8 +37,6 @@ export function useBreadcrumbs(items: BreadcrumbItem[]) {
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  // Desktop collapse and the mobile drawer are separate concerns: collapsing
-  // hides a persistent rail, the drawer overlays the page.
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[] | null>(null);

@@ -13,7 +13,6 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Someone arriving with a live session shouldn't sit on the login screen.
   useEffect(() => {
     if (!loading && user) router.replace('/tasks');
   }, [loading, user, router]);

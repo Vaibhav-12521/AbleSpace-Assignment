@@ -32,10 +32,6 @@ const COLOR_MODE_LABELS: Record<(typeof COLOR_MODES)[number], string> = {
   black: 'Black',
 };
 
-/**
- * Workspace switcher in the sidebar header. Opens the account menu from
- * screens 9 and 10: profile card, Change Theme, Color Mode, Settings.
- */
 export function WorkspaceMenu({ collapsed = false }: { collapsed?: boolean }) {
   const router = useRouter();
   const { user, workspace, logout } = useAuth();
@@ -87,7 +83,6 @@ export function WorkspaceMenu({ collapsed = false }: { collapsed?: boolean }) {
                   key={option}
                   checked={theme === option}
                   onSelect={(event) => {
-                    // Keep the menu open so the change is visible in place.
                     event.preventDefault();
                     setTheme(option);
                   }}

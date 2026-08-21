@@ -6,7 +6,6 @@ export class CreateCommentDto {
   @MaxLength(5000)
   body!: string;
 
-  /** Present when replying inside an existing thread. */
   @IsOptional()
   @IsString()
   parentId?: string;

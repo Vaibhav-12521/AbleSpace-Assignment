@@ -9,7 +9,6 @@ export interface JwtPayload {
   workspaceId: string;
 }
 
-/** The shape attached to `request.user` once a token validates. */
 export interface AuthenticatedUser {
   id: string;
   email: string;
@@ -30,8 +29,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  // Re-reads the user on every request so a deleted guest can't keep using a
-  // token that is still cryptographically valid.
   async validate(payload: JwtPayload): Promise<AuthenticatedUser> {
     const membership = await this.prisma.workspaceMember.findUnique({
       where: {

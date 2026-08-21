@@ -5,10 +5,6 @@ import { useBreadcrumbs } from '@/components/shell/app-shell';
 import { TaskWorkspace } from '@/components/tasks/task-workspace';
 import { useProject } from '@/hooks/queries';
 
-/**
- * A project's own task list — screen 12. Same board and list as /tasks, scoped
- * to one project, with the Projects > <name> breadcrumb in the shell header.
- */
 export default function ProjectDetailPage() {
   const params = useParams<{ id: string }>();
   const projectId = params.id;
@@ -17,7 +13,7 @@ export default function ProjectDetailPage() {
 
   useBreadcrumbs([
     { label: 'Projects', href: '/projects' },
-    { label: project.data?.name ?? '…' },
+    { label: project.data?.name ?? '...' },
   ]);
 
   return (

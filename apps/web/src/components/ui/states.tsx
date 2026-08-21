@@ -1,27 +1,7 @@
 'use client';
 
-import { Inbox, Loader2, TriangleAlert } from 'lucide-react';
+import { Inbox, TriangleAlert } from 'lucide-react';
 import { Button } from './button';
-
-/**
- * Loading, empty and error states.
- *
- * The Figma has no frames for any of these, so they are built from the same
- * tokens as the rest of the UI and kept deliberately plain. Noted in the
- * README as a documented addition.
- */
-
-export function LoadingState({ label = 'Loading' }: { label?: string }) {
-  return (
-    <div
-      role="status"
-      className="flex flex-1 items-center justify-center py-16 text-ink-muted"
-    >
-      <Loader2 className="h-4 w-4 animate-spin" />
-      <span className="sr-only">{label}</span>
-    </div>
-  );
-}
 
 export function EmptyState({
   title,
