@@ -5,16 +5,7 @@ import { WorkspaceBootstrapService } from '../workspaces/workspace-bootstrap.ser
 import type { JwtPayload } from './jwt.strategy';
 import { randomUUID } from 'node:crypto';
 
-const GUEST_NAMES = [
-  'Dexter',
-  'Ada',
-  'Linus',
-  'Grace',
-  'Alan',
-  'Barbara',
-  'Ken',
-  'Margaret',
-];
+const GUEST_NAME = 'Vaibhav';
 
 @Injectable()
 export class AuthService {
@@ -26,7 +17,7 @@ export class AuthService {
 
   async loginAsGuest() {
     const handle = randomUUID().slice(0, 8);
-    const name = GUEST_NAMES[Math.floor(Math.random() * GUEST_NAMES.length)];
+    const name = GUEST_NAME;
 
     const user = await this.prisma.user.create({
       data: {

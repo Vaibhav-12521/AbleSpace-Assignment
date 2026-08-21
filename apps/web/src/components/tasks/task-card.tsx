@@ -14,6 +14,7 @@ import {
 import { cn } from '@/lib/cn';
 import type { Task } from '@/lib/types';
 import type { FieldKey } from '@/hooks/use-view-preferences';
+import { usePrefetchTask } from '@/hooks/queries';
 
 export interface TaskCardProps {
   task: Task;
@@ -31,10 +32,13 @@ export function TaskCard({
   dragging,
   className,
 }: TaskCardProps) {
+  const prefetch = usePrefetchTask();
   const assignee = task.assignees[0];
 
   return (
     <article
+      onMouseEnter={() => prefetch(task.id)}
+      onFocus={() => prefetch(task.id)}
       className={cn(
         'group rounded-lg border border-line bg-surface p-2.5',
         'shadow-[var(--shadow-card)] transition-shadow',

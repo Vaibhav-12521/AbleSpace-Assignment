@@ -8,7 +8,14 @@ import {
 } from '@tanstack/react-query';
 import { api, type TaskFilters, type TaskInput } from '@/lib/api';
 import { pushToast } from '@/lib/toast';
-import type { Priority, Project, Task, TaskDetail, WorkspaceBootstrap } from '@/lib/types';
+import type {
+  Priority,
+  Project,
+  Status,
+  Task,
+  TaskDetail,
+  WorkspaceBootstrap,
+} from '@/lib/types';
 
 export const queryKeys = {
   bootstrap: ['bootstrap'] as const,
@@ -66,12 +73,85 @@ function invalidateTasks(client: ReturnType<typeof useQueryClient>) {
   return client.invalidateQueries({ queryKey: ['tasks'] });
 }
 
+let optimisticSeq = 0;
+
+function buildOptimisticTask(
+  input: TaskInput,
+  status: Status,
+  position: number,
+): Task {
+  const now = new Date().toISOString();
+  return {
+    id: `optimistic-${++optimisticSeq}`,
+    title: input.title,
+    description: input.description ?? null,
+    statusId: status.id,
+    status,
+    projectId: input.projectId ?? null,
+    parentId: input.parentId ?? null,
+    priority: input.priority ?? 'NO_PRIORITY',
+    startDate: input.startDate ?? null,
+    dueDate: input.dueDate ?? null,
+    position,
+    reporter: null,
+    assignees: [],
+    labels: [],
+    teams: [],
+    subtaskCount: 0,
+    commentCount: 0,
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
 export function useCreateTask() {
   const client = useQueryClient();
+
   return useMutation({
     mutationFn: (input: TaskInput) => api.createTask(input),
-    onSuccess: () => invalidateTasks(client),
+
+    onMutate: async (input) => {
+      if (input.parentId) return { snapshot: [] as const };
+
+      await client.cancelQueries({ queryKey: ['tasks'] });
+      const snapshot = client.getQueriesData<Task[]>({ queryKey: ['tasks'] });
+      const boot = client.getQueryData<WorkspaceBootstrap>(queryKeys.bootstrap);
+      const status = boot?.statuses.find((s) => s.id === input.statusId);
+      if (!status) return { snapshot };
+
+      for (const [key, tasks] of snapshot) {
+        if (!tasks) continue;
+        const position = tasks.filter((t) => t.statusId === status.id).length;
+        client.setQueryData<Task[]>(key, [
+          ...tasks,
+          buildOptimisticTask(input, status, position),
+        ]);
+      }
+
+      return { snapshot };
+    },
+
+    onError: (_error, _input, context) => {
+      for (const [key, tasks] of context?.snapshot ?? []) {
+        client.setQueryData(key, tasks);
+      }
+    },
+
+    onSettled: () => invalidateTasks(client),
   });
+}
+
+export function usePrefetchTask() {
+  const client = useQueryClient();
+
+  return (id: string) => {
+    if (id.startsWith('optimistic-')) return;
+    void client.prefetchQuery({
+      queryKey: queryKeys.task(id),
+      queryFn: () => api.getTask(id),
+      staleTime: 30_000,
+    });
+  };
 }
 
 export function useUpdateTask() {

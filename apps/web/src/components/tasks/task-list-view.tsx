@@ -27,6 +27,7 @@ import { InlineTaskInput } from './inline-task-input';
 import { formatLongDate } from '@/lib/date';
 import type { Status, Task } from '@/lib/types';
 import type { FieldKey } from '@/hooks/use-view-preferences';
+import { usePrefetchTask } from '@/hooks/queries';
 
 export interface TaskListViewProps {
   statuses: Status[];
@@ -44,6 +45,7 @@ export function TaskListView({
   onDeleteTask,
 }: TaskListViewProps) {
   const [addingTo, setAddingTo] = useState<string | null>(null);
+  const prefetch = usePrefetchTask();
 
   return (
     <div className="space-y-5 px-4 pb-10 sm:px-6">
@@ -110,7 +112,7 @@ export function TaskListView({
 
                 <TableBody>
                   {rows.map((task) => (
-                    <Tr key={task.id}>
+                    <Tr key={task.id} onMouseEnter={() => prefetch(task.id)}>
                       <Td>
                         <Link
                           href={`/tasks/${task.id}`}
